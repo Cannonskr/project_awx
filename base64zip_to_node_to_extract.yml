@@ -1,5 +1,6 @@
 - hosts: all
   become: true
+  gather_facts: false
   vars:
     zip_b64: "{{ my_file_base64 }}"
     zip_path: /tmp/upload/package.zip
