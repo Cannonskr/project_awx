@@ -1,0 +1,31 @@
+- hosts: all
+  become: true
+  vars:
+    zip_b64: "{{ my_file_base64 }}"
+    zip_path: /tmp/upload/package.zip
+    extract_path: /tmp/upload/extracted
+  tasks:
+    - name: Ensure zip directory exists
+      file:
+        path: "{{ zip_path | dirname }}"
+        state: directory
+        mode: '0755'
+
+    - name: Write zip file from base64
+      copy:
+        content: "{{ zip_b64 | b64decode }}"
+        dest: "{{ zip_path }}"
+        mode: '0644'
+      no_log: true
+
+    - name: Ensure extract directory exists
+      file:
+        path: "{{ extract_path }}"
+        state: directory
+        mode: '0755'
+
+    - name: Unzip package
+      unarchive:
+        src: "{{ zip_path }}"
+        dest: "{{ extract_path }}"
+        remote_src: true
